@@ -3,5 +3,4 @@ cvdo: a.cpp
 
 
 a: b.cpp
-	g++ b.cpp -o cvdo `pkg-config --cflags opencv4` `pkg-config --libs opencv4`
-
+	g++ b.cpp -o cvdo  `pkg-config --cflags opencv4` `pkg-config --libs opencv4` 

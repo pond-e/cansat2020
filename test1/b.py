@@ -353,4 +353,4 @@ if __name__ == "__main__":
         sleepTime       = 0.1 - (time.time() - now)
         if sleepTime < 0.0:
             continue
-        time.sleep(12)
+        time.sleep(1)

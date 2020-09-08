@@ -1,16 +1,27 @@
+#include<iostream>
+#include<stdlib.h>
+#include<string>
 #include <opencv2/opencv.hpp>
 #include <opencv2/imgproc/types_c.h>
 
 using namespace std;
 int main(void) {
-	cv::VideoCapture cap(1);
-        	if (!cap.isOpened()) {
-        	        cout << "Not Opened" << endl;
-                	return -1;
-        	} else {
-        	        cout << "Open Successful" << endl;
-        	}
+	cv::Mat img;
+	//filename入力
+	
+	img = cv::imread("filename");
+	if (img.empty()) {
+		// 画像の中身が空なら終了する
+		cout << "できませんでした" <<endl;
+		exit(1);	
+	}
 
+
+	while(true){
+
+	return 0;
+}
+/*
 
 
 		//画像撮影
@@ -52,3 +63,5 @@ cap >> mainframe;
 	cv::Mat color = cv::imread("hoge.png", 1);   // Read as Color image
 	cv::Mat gray;
 	cv::cvtColor(color, gray, cv::COLOR_BGR2GRAY);
+
+	*/

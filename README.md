@@ -1,3 +1,5 @@
 # cansat
 cocoaticsample
-opencv4とｃ＋＋のローバー用
+opencv4で写真で実際の面積測定
+ローバー用ビデオプログラム
+缶サット用制御

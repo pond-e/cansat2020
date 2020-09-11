@@ -14,7 +14,15 @@
 #    $ sudo pip install wiringpi2
 # 起動方法
 # pi@raspberrypi ~ $ sudo python cs17_wpi3_2sensors.py
-#
+#使い方
+#mkdir data
+#cd data
+#sudo touch cs17_wpi3_2sensors_logs.csv
+#sudo chown pi cs17_wpi3_2sensors_logs.csv
+#sudo touch datagsv.csv
+#sudo chown pi datagsv.csv
+#sudo touch datagga.csv
+#sudo chown pi datagga.csv
 # データ計測時間は　SAMPLING_TIME x TIMES
 ############################################################
 
@@ -614,7 +622,6 @@ if __name__ == '__main__':
             date, temp, humi, press, acc[0], acc[1], acc[2], gyr[0], gyr[1], gyr[2], mag[0], mag[1], mag[2],
             h)  # 時間、xyz軸回りの加速度
             f_cs17_wpi3_2sensors.write(value + "\n")  # ファイルを出力
-            print("hello")
             print(value)  # 標準出力
             # 指定秒数の一時停止
             sleepTime = SAMPLING_TIME - (time.time() - now)

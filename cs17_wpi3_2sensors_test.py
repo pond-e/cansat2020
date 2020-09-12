@@ -587,8 +587,7 @@ def calibGyro(_count=1000):
 ###############ローバーの設定###################
 houkou_rad = 0.52
 max     = -100
-###########パラシュート、ローバーのflag設定########
-flag_p = False
+###########ローバーのflag設定########
 flag_r = False
 gosa_l = 0.72
 gosa_s = 0.67
@@ -601,9 +600,6 @@ def gps_raspiposition(alt_lat_long,GPS_point):
         #左へ
     else:
         #そのまま
-##################パラシュート発射#####################
-def parachute():
-
 ###############################################
 ####################mpu9250 date get settings end##################
 if __name__ == '__main__':
@@ -709,10 +705,7 @@ if __name__ == '__main__':
             print("time_d = %8.8f\n"%time_d)
             # パラシュートを落とすための条件とローバーを動かす時の条件
             if ((max-h) > 30):
-                if (flag_p == False):
-                    flag_p = True
-                    parachute()
-                elif (flag_r == False):
+                if (flag_r == False):
                     if (acc[1] > gosa_s&&acc[1] < gosa_l):
                         if (acc[2] > gosa_s&&acc[2] < gosa_l):
                             flag_r = True

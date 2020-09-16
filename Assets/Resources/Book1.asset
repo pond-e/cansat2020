@@ -1,0 +1,236 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 8
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: add340ca6918ba046a0f89102106c252, type: 3}
+  m_Name: Book1
+  m_EditorClassIdentifier: 
+  sheets:
+  - name: Sheet1
+    list:
+    - ac_x: -0.004
+      ac_y: -0.025
+      ac_z: 0.983
+    - ac_x: -0.007
+      ac_y: -0.029
+      ac_z: 0.989
+    - ac_x: -0.009
+      ac_y: -0.029
+      ac_z: 0.998
+    - ac_x: -0.007
+      ac_y: -0.021
+      ac_z: 0.997
+    - ac_x: -0.005
+      ac_y: -0.029
+      ac_z: 0.997
+    - ac_x: -0.006
+      ac_y: -0.023
+      ac_z: 0.992
+    - ac_x: -0.006
+      ac_y: -0.029
+      ac_z: 0.994
+    - ac_x: -0.014
+      ac_y: -0.027
+      ac_z: 0.999
+    - ac_x: 0.06
+      ac_y: -0.025
+      ac_z: 1
+    - ac_x: -0.007
+      ac_y: -0.026
+      ac_z: 0.996
+    - ac_x: -0.008
+      ac_y: -0.023
+      ac_z: 0.997
+    - ac_x: -0.001
+      ac_y: -0.03
+      ac_z: 1.002
+    - ac_x: -0.005
+      ac_y: -0.029
+      ac_z: 0.994
+    - ac_x: -0.005
+      ac_y: -0.025
+      ac_z: 1.059
+    - ac_x: -0.007
+      ac_y: -0.031
+      ac_z: 1.06
+    - ac_x: -0.004
+      ac_y: -0.026
+      ac_z: 0.994
+    - ac_x: -0.003
+      ac_y: -0.023
+      ac_z: 0.997
+    - ac_x: -0.007
+      ac_y: -0.026
+      ac_z: 0.999
+    - ac_x: -0.005
+      ac_y: -0.028
+      ac_z: 1.005
+    - ac_x: -0.004
+      ac_y: -0.027
+      ac_z: 1.008
+    - ac_x: -0.007
+      ac_y: -0.025
+      ac_z: 1.002
+    - ac_x: -0.006
+      ac_y: -0.026
+      ac_z: 0.99
+    - ac_x: -0.008
+      ac_y: -0.024
+      ac_z: 0.994
+    - ac_x: -0.008
+      ac_y: -0.022
+      ac_z: 0.997
+    - ac_x: -0.008
+      ac_y: -0.026
+      ac_z: 0.993
+    - ac_x: -0.006
+      ac_y: -0.028
+      ac_z: 0.998
+    - ac_x: -0.006
+      ac_y: -0.026
+      ac_z: 1.001
+    - ac_x: -0.011
+      ac_y: -0.028
+      ac_z: 1.002
+    - ac_x: -0.008
+      ac_y: -0.013
+      ac_z: 1.005
+    - ac_x: -0.01
+      ac_y: -0.031
+      ac_z: 0.993
+    - ac_x: -0.007
+      ac_y: -0.025
+      ac_z: 0.995
+    - ac_x: -0.011
+      ac_y: -0.023
+      ac_z: 1.061
+    - ac_x: -0.006
+      ac_y: -0.025
+      ac_z: 0.993
+    - ac_x: -0.005
+      ac_y: -0.028
+      ac_z: 1.003
+    - ac_x: -0.007
+      ac_y: -0.025
+      ac_z: 0.996
+    - ac_x: -0.006
+      ac_y: -0.025
+      ac_z: 0.989
+    - ac_x: -0.012
+      ac_y: -0.028
+      ac_z: 0.999
+    - ac_x: -0.012
+      ac_y: -0.026
+      ac_z: 0.997
+    - ac_x: -0.01
+      ac_y: -0.028
+      ac_z: 0.997
+    - ac_x: -0.005
+      ac_y: -0.023
+      ac_z: 1.058
+    - ac_x: -0.007
+      ac_y: -0.027
+      ac_z: 1.003
+    - ac_x: -0.007
+      ac_y: -0.024
+      ac_z: 0.994
+    - ac_x: -0.014
+      ac_y: -0.041
+      ac_z: 0.986
+    - ac_x: -0.012
+      ac_y: -0.047
+      ac_z: 1.004
+    - ac_x: -0.014
+      ac_y: -0.045
+      ac_z: 1.005
+    - ac_x: -0.002
+      ac_y: -0.059
+      ac_z: 0.985
+    - ac_x: 0.006
+      ac_y: -0.012
+      ac_z: 1.01
+    - ac_x: -0.045
+      ac_y: -0.011
+      ac_z: 0.994
+    - ac_x: -0.012
+      ac_y: -0.036
+      ac_z: 1.03
+    - ac_x: -0.033
+      ac_y: 0.008
+      ac_z: 1.013
+    - ac_x: -0.032
+      ac_y: 0.047
+      ac_z: 0.997
+    - ac_x: -0.039
+      ac_y: 0.007
+      ac_z: 0.985
+    - ac_x: -0.043
+      ac_y: 0.001
+      ac_z: 0.998
+    - ac_x: -0.017
+      ac_y: 0.087
+      ac_z: 1.022
+    - ac_x: -0.016
+      ac_y: 0.07
+      ac_z: 0.996
+    - ac_x: -0.014
+      ac_y: 0.052
+      ac_z: 1.007
+    - ac_x: -0.031
+      ac_y: 0.068
+      ac_z: 1.048
+    - ac_x: -0.021
+      ac_y: 0.059
+      ac_z: 0.99
+    - ac_x: 0.012
+      ac_y: 0.078
+      ac_z: 0.967
+    - ac_x: 0.019
+      ac_y: 0.102
+      ac_z: 1.014
+    - ac_x: -0.013
+      ac_y: 0.131
+      ac_z: 0.981
+    - ac_x: 0.028
+      ac_y: 0.092
+      ac_z: 0.986
+    - ac_x: 0.037
+      ac_y: 0.122
+      ac_z: 0.992
+    - ac_x: 0.013
+      ac_y: 0.118
+      ac_z: 0.965
+    - ac_x: 0.02
+      ac_y: 0.088
+      ac_z: 1.013
+    - ac_x: 0.013
+      ac_y: 0.113
+      ac_z: 0.991
+    - ac_x: 0.023
+      ac_y: 0.118
+      ac_z: 0.999
+    - ac_x: 0.025
+      ac_y: 0.117
+      ac_z: 0.996
+    - ac_x: -0.041
+      ac_y: 0.094
+      ac_z: 0.948
+    - ac_x: 0.012
+      ac_y: 0.119
+      ac_z: 1.017
+    - ac_x: 0.01
+      ac_y: 0.125
+      ac_z: 1.005
+    - ac_x: 0.026
+      ac_y: 0.187
+      ac_z: 1.014
+    - ac_x: 0.003
+      ac_y: 0.085
+      ac_z: 0.993

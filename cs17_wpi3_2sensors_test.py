@@ -34,6 +34,7 @@ import os
 import serial
 import codecs
 import math
+import RPi.GPIO as GPIO
 # データ計測時間は　SAMPLING_TIME x TIMES
 SAMPLING_TIME = 0.1  # データ取得の時間間隔[sec]
 TIMES = 100  # データの計測回数
@@ -587,19 +588,77 @@ def calibGyro(_count=1000):
 ###############ローバーの設定###################
 houkou_rad = 0.52
 max     = -100
+GPIO.setmode(GPIO.BCM)
+#GPIO4を出力端子設定
+GPIO.setup(4, GPIO.OUT)
+GPIO.setup(5, GPIO.OUT)
+#GPIO4をPWM設定、周波数は50Hz
+p1 = GPIO.PWM(4,50)
+p2 = GPIO.PWM(4,50)
+#Duty Cycle 0%
+p1.start(0.0)
+p2.start(0.0)
 ###########ローバーのflag設定########
 flag_r = False
 gosa_l = 0.72
 gosa_s = 0.67
 ###################ローバ制御#########################
+"""
 def gps_raspiposition(alt_lat_long,GPS_point):
     theta1 = math.atan(((math.cos(GPS_point[0]))*(math.sin(GPS_point[1]-alt_lat_long[2])))/((math.cos(alt_lat_long[1]))*(math.sin(GPS_point[0]))-(math.sin(alt_lat_long[1])*(math.cos(GPS_point[0]))*(math.cos(GPS_point[1]-alt_lat_long[2])))))
     if (theta1 > houkou_rad):
         #右へ
+        dc1 = 0.035
+        p1.ChangeDutyCycle(dc1)
+        time.sleep(0.4)
+        p1.ChangeDutyCycle(0.0)
     elif (theta1 < -houkou_rad):
         #左へ
+        dc2 = 0.115
+        p2.ChangeDutyCycle(dc2)
+        time.sleep(0.4)
+        p2.ChangeDutyCycle(0.0)
     else:
         #そのまま
+        dc1 = 0.035
+        p1.ChangeDutyCycle(dc1)
+        dc2 = 0.115
+        p2.ChangeDutyCycle(dc2)
+        time.sleep(0.4)
+        p1.ChangeDutyCycle(0.0)
+        p2.ChangeDutyCycle(0.0)
+"""
+def north_raspi(mag):
+    if(mag[0]<10&&mag[0]>-30):
+        if(mag[1]<50&&mag[1]>10):
+            #時計回り（左）
+            dc2 = 0.115
+            p2.ChangeDutyCycle(dc2)
+            time.sleep(0.4)
+            p2.ChangeDutyCycle(0.0)
+        elif(mag[1]<=10&&mag[1]>-10):
+            #半時計回り（右）
+            dc1 = 0.035
+            p1.ChangeDutyCycle(dc1)
+            time.sleep(0.4)
+            p1.ChangeDutyCycle(0.0)
+    elif(mag[0]<30&&mag[0]>=10):
+        if(mag[1]<10&&mag[1]>-10):
+            #半時計回り（右）
+            dc1 = 0.035
+            p1.ChangeDutyCycle(dc1)
+            time.sleep(0.4)
+            p1.ChangeDutyCycle(0.0)
+    else:
+        #そもまま
+        dc1 = 0.035
+        p1.ChangeDutyCycle(dc1)
+        dc2 = 0.115
+        p2.ChangeDutyCycle(dc2)
+        time.sleep(0.4)
+        p1.ChangeDutyCycle(0.0)
+        p2.ChangeDutyCycle(0.0)
+
 ###############################################
 ####################mpu9250 date get settings end##################
 if __name__ == '__main__':
@@ -713,7 +772,7 @@ if __name__ == '__main__':
             time0 = time1
 #########################################
             if (flag_r == True):
-                gps_raspiposition()
+                north_raspi(mag)
 #########################################
             # ファイルへ書出し
             value = "%s,%6.2f,%6.2f,%7.2f,%6.3f,%6.3f,%6.3f,%6.3f,%6.3f,%6.3f,%6.3f,%6.3f,%6.3f,%8.8f,%8.8f,%8.8f,%4.4f" % (

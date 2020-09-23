@@ -10,13 +10,18 @@
 using namespace std;
 
 int main(void) {
-	int a, b, c, d, e, f;
+	int a=0;
+	int b=0;
+       	int c=0;
+       	int d=255;
+       	int e=255;
+	int f=255;
 
 	cv::Mat img;
 	cv::Mat test;
 
 	//filename入力
-	img = cv::imread("filename");
+	img = cv::imread("1.png");
 	if (img.empty()) {
 		// 画像の中身が空なら終了する
 		cout << "not available" <<endl;
@@ -134,7 +139,7 @@ int main(void) {
 
 
 	//半径で縮尺を求める
-	double R = 1/*パラシュート半径*//radius;
+	double R = 50/radius;
 
 
 	//ラべリング
@@ -154,7 +159,7 @@ int main(void) {
 
 
 	//描画
-	cv::Mat Dst;
+	cv::Mat Dst(test.size(), CV_8UC3);;
 	for (int i = 0; i < Dst.rows; ++i){
 
 		int *lb = LabelImg.ptr<int>(i);
@@ -169,30 +174,27 @@ int main(void) {
 	//重心計算
 	double sample_area = max_area*0.4;
 	int sample_area2 = sample_area;
-	int centerX[nLab] = {};
-	int centerY[nLab] = {};
+	int centerX[nLab];
+	int centerY[nLab];
 	int data =0;
 	for (int i = 1; i < nLab; ++i){
 
 		double *param = centroids.ptr<double>(i);
-		if(param[cv::ConnectedComponentsTypes::CC_STAT_AREA] >= sample_area){
-
-			centerX[data] = static_cast<int>(param[0]);
-			centerY[data] = static_cast<int>(param[1]);
-			cv::circle(Dst, cv::Point(centerX[i], centerY[i]), 3, cv::Scalar(0, 0, 255), -1);
-			data =data+1;
-		}
+		centerX[i] = static_cast<int>(param[0]);
+		centerY[i] = static_cast<int>(param[1]);
+		cv::circle(Dst, cv::Point(centerX[i], centerY[i]), 3, cv::Scalar(0, 0, 255), -1);
 	}
 
 
 	// ROIの設定
 	int q=0;
+	int LastcenterX[nLab] = {};
+	int LastcenterY[nLab] = {};
 	for (int i = 1; i < nLab; ++i){
 
 		int *param = stats.ptr<int>(i);
 		if(param[cv::ConnectedComponentsTypes::CC_STAT_AREA] >= sample_area2){
 
-			q=q+1;
 			int x = param[cv::ConnectedComponentsTypes::CC_STAT_LEFT];
 			int y = param[cv::ConnectedComponentsTypes::CC_STAT_TOP];
 			int height = param[cv::ConnectedComponentsTypes::CC_STAT_HEIGHT];
@@ -201,17 +203,30 @@ int main(void) {
 			stringstream num;
 			num << q;
 			cv::putText(Dst, num.str(),cv::Point(x+5, y+20), cv::FONT_HERSHEY_COMPLEX,0.7, cv::Scalar(0, 255, 255), 2);	
+			LastcenterX[q] = centerX[i];
+			LastcenterY[q] = centerY[i];
+			q = q+1;
 		}
 	}
 
 	cv::imwrite("Dst.png",Dst);//ROIの画像
+	double D;
+	double Are;
 	if(q=3){
 
 		//面積を求める
-		double D = abs(1/2*(centerX[0]*centerY[1]+centerX[1]*centerY[2]+centerX[2]*centerY[0]-centerX[1]*centerY[0]-centerX[2]*centerY[1]-centerX[0]*centerY[2]));
+		double s1 = LastcenterX[0]*LastcenterY[1];
+		double s2 = LastcenterX[1]*LastcenterY[2];
+		double s3 = LastcenterX[2]*LastcenterY[0];
+		double s4 = LastcenterX[1]*LastcenterY[0];
+		double s5 = LastcenterX[2]*LastcenterY[1];
+		double s6 = LastcenterX[0]*LastcenterY[2];
+		D = fabs((s1+s2+s3-s4-s5-s6)/2);
+		
 		//縮尺をもとに算出	
-		double A =D*R*R;
-		printf("最終面積は%fm^2",A);
+		Are =D*R*R;
+		printf("are=%f\n",D);
+		printf("最終面積は%fm^2\n",Are);
 	}else{
 
 		cout <<"too more lab!!"<< endl;
@@ -227,15 +242,15 @@ int main(void) {
 	}
 
 	fs << "番号　重心位置[X, Y]" << endl;
-       	fs << "1" << "centerX[0]:" <<", " << "centerY[0]:" << endl;
-	fs << "2" << "centerX[1]:" <<", " << "centerY[1]:" << endl;
-	fs << "3" << "centerX[2]:" <<", " << "centerY[2]:" << endl;
+       	fs << "1" << "," << LastcenterX[0] <<", " << LastcenterY[0] << endl;
+	fs << "2" << "," << LastcenterX[1] <<", " << LastcenterY[1] << endl;
+	fs << "3" << "," << LastcenterX[2] <<", " << LastcenterY[2] << endl;
        
 	fs << "縮尺[実寸/画像内]" << endl;
-	fs << "R:" << endl;
+	fs << R << endl;
 
 	fs << "面積[m^2]" << endl;
-	fs << "A:" << endl;
+	fs <<  Are << endl;
 
 	// 改行。そして書き出す
 	// close() で暗黙的に書き出す (閉じるときにバッファをすべて書き出してくれる)

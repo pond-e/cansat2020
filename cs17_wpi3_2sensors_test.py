@@ -588,46 +588,33 @@ def calibGyro(_count=1000):
 ###############ローバーの設定###################
 houkou_rad = 0.52
 max     = -100
+counter = 0
+count_limit = 0
 GPIO.setmode(GPIO.BCM)
 #GPIO4を出力端子設定
 GPIO.setup(4, GPIO.OUT)
 GPIO.setup(5, GPIO.OUT)
+GPIO.setup(6, GPIO.OUT)
 #GPIO4をPWM設定、周波数は50Hz
 p1 = GPIO.PWM(4,50)
-p2 = GPIO.PWM(4,50)
+p2 = GPIO.PWM(5,50)
+p3 = GPIO.PWM(6,50)
 #Duty Cycle 0%
 p1.start(0.0)
 p2.start(0.0)
+p3.start(0.0)
 ###########ローバーのflag設定########
 flag_r = False
-gosa_l = 0.72
-gosa_s = 0.67
+flag_p = False
+gosa_l = 0.5184
+gosa_s = 0.4489
 ###################ローバ制御#########################
-"""
-def gps_raspiposition(alt_lat_long,GPS_point):
-    theta1 = math.atan(((math.cos(GPS_point[0]))*(math.sin(GPS_point[1]-alt_lat_long[2])))/((math.cos(alt_lat_long[1]))*(math.sin(GPS_point[0]))-(math.sin(alt_lat_long[1])*(math.cos(GPS_point[0]))*(math.cos(GPS_point[1]-alt_lat_long[2])))))
-    if (theta1 > houkou_rad):
-        #右へ
-        dc1 = 0.035
-        p1.ChangeDutyCycle(dc1)
-        time.sleep(0.4)
-        p1.ChangeDutyCycle(0.0)
-    elif (theta1 < -houkou_rad):
-        #左へ
-        dc2 = 0.115
-        p2.ChangeDutyCycle(dc2)
-        time.sleep(0.4)
-        p2.ChangeDutyCycle(0.0)
-    else:
-        #そのまま
-        dc1 = 0.035
-        p1.ChangeDutyCycle(dc1)
-        dc2 = 0.115
-        p2.ChangeDutyCycle(dc2)
-        time.sleep(0.4)
-        p1.ChangeDutyCycle(0.0)
-        p2.ChangeDutyCycle(0.0)
-"""
+def para():
+    dc3=0.035
+    p3.ChangeDutyCycle(dc3)
+    time.sleep(0.5)
+    p3.ChangeDutyCycle(0.0)
+
 def north_raspi(mag):
     if(mag[0]<10&&mag[0]>-30):
         if(mag[1]<50&&mag[1]>10):
@@ -765,14 +752,17 @@ if __name__ == '__main__':
             # パラシュートを落とすための条件とローバーを動かす時の条件
             if ((max-h) > 30):
                 if (flag_r == False):
-                    if (acc[1] > gosa_s&&acc[1] < gosa_l):
-                        if (acc[2] > gosa_s&&acc[2] < gosa_l):
-                            flag_r = True
+                    if ((acc[1]*acc[1]+acc[2]*acc[2]) > gosa_s&&(acc[1]*acc[1]+acc[2]*acc[2]) < gosa_l):
+                        flag_r = True
 #########################################
             time0 = time1
 #########################################
-            if (flag_r == True):
+            if (flag_r == True&&counter<count_limit):
+                if (flag_p == False):
+                    para()
+                    flag_p = True
                 north_raspi(mag)
+                counter += 1
 #########################################
             # ファイルへ書出し
             value = "%s,%6.2f,%6.2f,%7.2f,%6.3f,%6.3f,%6.3f,%6.3f,%6.3f,%6.3f,%6.3f,%6.3f,%6.3f,%8.8f,%8.8f,%8.8f,%4.4f" % (

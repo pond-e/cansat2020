@@ -616,21 +616,21 @@ def para():
     p3.ChangeDutyCycle(0.0)
 
 def north_raspi(mag):
-    if(mag[0]<10&&mag[0]>-30):
-        if(mag[1]<50&&mag[1]>10):
+    if(mag[0]<10 and mag[0]>-30):
+        if(mag[1]<50 and mag[1]>10):
             #時計回り（左）
             dc2 = 0.115
             p2.ChangeDutyCycle(dc2)
             time.sleep(0.4)
             p2.ChangeDutyCycle(0.0)
-        elif(mag[1]<=10&&mag[1]>-10):
+        elif(mag[1]<=10 and mag[1]>-10):
             #半時計回り（右）
             dc1 = 0.035
             p1.ChangeDutyCycle(dc1)
             time.sleep(0.4)
             p1.ChangeDutyCycle(0.0)
-    elif(mag[0]<30&&mag[0]>=10):
-        if(mag[1]<10&&mag[1]>-10):
+    elif(mag[0]<30 and mag[0]>=10):
+        if(mag[1]<10 and mag[1]>-10):
             #半時計回り（右）
             dc1 = 0.035
             p1.ChangeDutyCycle(dc1)

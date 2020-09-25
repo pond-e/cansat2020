@@ -753,7 +753,7 @@ if __name__ == '__main__':
             # パラシュートを落とすための条件とローバーを動かす時の条件
             if ((max-h) > 30):
                 if (flag_r == False):
-                    if ((acc[1]*acc[1]+acc[2]*acc[2]) > gosa_s&&(acc[1]*acc[1]+acc[2]*acc[2]) < gosa_l):
+                    if ((acc[1]*acc[1]+acc[2]*acc[2]) > gosa_s and (acc[1]*acc[1]+acc[2]*acc[2]) < gosa_l):
                         flag_r = True
 #########################################
             time0 = time1

@@ -713,7 +713,8 @@ if __name__ == '__main__':
             # 衛星番号,衛星仰角,衛星方位角,キャリア/ノイズ比,　を繰り返す
             if gps_data.startswith('$GPGSV'):
                 with open('datagsv.csv', 'a') as f:
-                    gpgsv[2] == '1':
+                    gpgsv = gps_data.split(',')
+                    if gpgsv[2] == '1':
                     #衛生の個数を記録し、情報を追加する
                     num_sat = gpgsv[3]
                     f.write(gpgsv[1] + gpgsv[3] + '\n')

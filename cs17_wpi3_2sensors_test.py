@@ -684,7 +684,6 @@ if __name__ == '__main__':
 
             if(h > max):
                 max = h
-"""
 ############GPSデータの取得#############
             gps_data = ser.readline()
             if not gps_data:
@@ -715,7 +714,6 @@ if __name__ == '__main__':
                 with open('datagsv.csv', 'a') as f:
                     gpgsv = gps_data.split(',')
                     if gpgsv[2] == '1':
-                    #衛生の個数を記録し、情報を追加する
                     num_sat = gpgsv[3]
                     f.write(gpgsv[1] + gpgsv[3] + '\n')
                     #それぞれの衛星の番号、仰角、方位角を追加する
@@ -747,7 +745,6 @@ if __name__ == '__main__':
                     f.write(time_and_number + ',' + alt_lat_long + '\n')
                     print(time_and_number + ',' + alt_lat_long)
 #######################################
-"""
             time1 = time.time()
             time_d = time1 - time0
             print("time_d = %8.8f\n"%time_d)

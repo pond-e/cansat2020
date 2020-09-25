@@ -742,7 +742,7 @@ if __name__ == '__main__':
                 time_and_number = "%s,%s" % (yyyymmddhhmmssff, num_sat)
                 # ファイル名を書き換える
                 # GGAのデータを標準出力、加えてcsvファイルに出力
-                with opwn(new_name, 'a') as f:
+                with opwn(new_name, 'a') as f:https://qiita.com/linyixian/items/02b21609067f694b4a73
                     f.write(time_and_number + ',' + alt_lat_long + '\n')
                     print(time_and_number + ',' + alt_lat_long)
 #######################################
@@ -757,7 +757,7 @@ if __name__ == '__main__':
 #########################################
             time0 = time1
 #########################################
-            if (flag_r == True&&counter<count_limit):
+            if (flag_r == True and counter<count_limit):
                 if (flag_p == False):
                     para()
                     flag_p = True

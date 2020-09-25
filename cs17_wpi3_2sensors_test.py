@@ -766,9 +766,9 @@ if __name__ == '__main__':
                 counter += 1
 #########################################
             # ファイルへ書出し
-            value = "%s,%6.2f,%6.2f,%7.2f,%6.3f,%6.3f,%6.3f,%6.3f,%6.3f,%6.3f,%6.3f,%6.3f,%6.3f,%8.8f,%8.8f,%8.8f,%4.4f" % (
+            value = "%s,%6.2f,%6.2f,%7.2f,%6.3f,%6.3f,%6.3f,%6.3f,%6.3f,%6.3f,%6.3f,%6.3f,%6.3f,%4.4f" % (
             date, temp, humi, press, acc[0], acc[1], acc[2], gyr[0], gyr[1], gyr[2], mag[0], mag[1], mag[2],
-            meter_mks[0],meter_mks[1],meter_mks[2],h)  # 時間、xyz軸回りの加速度, 0地点からの距離
+            ,h)  # 時間、xyz軸回りの加速度, 0地点からの距離
             f_cs17_wpi3_2sensors.write(value + "\n")  # ファイルを出力
             print(value)  # 標準出力
 

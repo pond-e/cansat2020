@@ -684,7 +684,7 @@ if __name__ == '__main__':
 
             if(h > max):
                 max = h
-
+"""
 ############GPSデータの取得#############
             gps_data = ser.readline()
             if not gps_data:
@@ -747,6 +747,7 @@ if __name__ == '__main__':
                     f.write(time_and_number + ',' + alt_lat_long + '\n')
                     print(time_and_number + ',' + alt_lat_long)
 #######################################
+"""
             time1 = time.time()
             time_d = time1 - time0
             print("time_d = %8.8f\n"%time_d)

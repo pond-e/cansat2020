@@ -139,7 +139,7 @@ int main(void) {
 
 
 	//半径で縮尺を求める
-	double R = 50/radius;
+	double R = 0.145/radius;
 
 
 	//ラべリング
@@ -210,8 +210,8 @@ int main(void) {
 	}
 
 	cv::imwrite("Dst.png",Dst);//ROIの画像
-	double D;
-	double Are;
+	double D,E;
+	double Are,Are2;
 	if(q=3){
 
 		//面積を求める
@@ -222,39 +222,82 @@ int main(void) {
 		double s5 = LastcenterX[2]*LastcenterY[1];
 		double s6 = LastcenterX[0]*LastcenterY[2];
 		D = fabs((s1+s2+s3-s4-s5-s6)/2);
-		
+
+		fstream fs;
+
+	        fs.open("output3.txt", ios::out);
+        	if(! fs.is_open()) {
+                	return EXIT_FAILURE;
+        	}
+
+        	fs << "番号　重心位置[X, Y]" << endl;
+        	fs << "1" << "," << LastcenterX[0] <<", " << LastcenterY[0] << endl;
+        	fs << "2" << "," << LastcenterX[1] <<", " << LastcenterY[1] << endl;
+        	fs << "3" << "," << LastcenterX[2] <<", " << LastcenterY[2] << endl;
+
+        	fs << "縮尺[実寸/画像内]" << endl;
+        	fs << R << endl;
+	
+        	fs << "面積[m^2]" << endl;
+        	fs <<  Are << endl;
+	
+        	// 改行。そして書き出す
+        	// close() で暗黙的に書き出す (閉じるときにバッファをすべて書き出してくれる)
+        	fs.close();
+
+
 		//縮尺をもとに算出	
 		Are =D*R*R;
 		printf("are=%f\n",D);
 		printf("最終面積は%fm^2\n",Are);
+	}else if(q=4){
+
+	
+		//面積を求める
+                double m1 = LastcenterX[0]*(LastcenterY[3]-LastcenterY[1]);
+                double m2 = LastcenterX[1]*(LastcenterY[0]-LastcenterY[2]);
+                double m3 = LastcenterX[2]*(LastcenterY[1]-LastcenterY[3]);
+                double m4 = LastcenterX[3]*(LastcenterY[2]-LastcenterY[0]);
+             
+                E = fabs((m1+m2+m3+m4)/2);
+
+                fstream fs;
+
+                fs.open("output4.txt", ios::out);
+                if(! fs.is_open()) {
+                        return EXIT_FAILURE;
+                }
+
+                fs << "番号　重心位置[X, Y]" << endl;
+                fs << "1" << "," << LastcenterX[0] <<", " << LastcenterY[0] << endl;
+                fs << "2" << "," << LastcenterX[1] <<", " << LastcenterY[1] << endl;
+                fs << "3" << "," << LastcenterX[2] <<", " << LastcenterY[2] << endl;
+		fs << "4" << "," << LastcenterX[3] <<", " << LastcenterY[3] << endl;
+
+                fs << "縮尺[実寸/画像内]" << endl;
+                fs << E << endl;
+
+                fs << "面積[m^2]" << endl;
+                fs <<  Are2 << endl;
+
+                // 改行。そして書き出す
+                // close() で暗黙的に書き出す (閉じるときにバッファをすべて書き出してくれる)
+                fs.close();
+
+
+                //縮尺をもとに算出      
+                Are =E*R*R;
+                printf("are=%f\n",E);
+                printf("最終面積は%fm^2\n",Are2);
+
+	
+	
 	}else{
 
 		cout <<"too more lab!!"<< endl;
 	}		
 
 
-
-	fstream fs;
-
-	fs.open("output.txt", ios::out);
-	if(! fs.is_open()) {
-		return EXIT_FAILURE;
-	}
-
-	fs << "番号　重心位置[X, Y]" << endl;
-       	fs << "1" << "," << LastcenterX[0] <<", " << LastcenterY[0] << endl;
-	fs << "2" << "," << LastcenterX[1] <<", " << LastcenterY[1] << endl;
-	fs << "3" << "," << LastcenterX[2] <<", " << LastcenterY[2] << endl;
-       
-	fs << "縮尺[実寸/画像内]" << endl;
-	fs << R << endl;
-
-	fs << "面積[m^2]" << endl;
-	fs <<  Are << endl;
-
-	// 改行。そして書き出す
-	// close() で暗黙的に書き出す (閉じるときにバッファをすべて書き出してくれる)
-	fs.close();
 
 	return 0;
 }

@@ -11,7 +11,7 @@ int main()
     Mat img;
 
     //動画をキャプチャ
-    VideoCapture cap("output.mp4"); //Windowsの場合　パス中の¥は重ねて¥¥とする
+    VideoCapture cap("output.avi"); //Windowsの場合　パス中の¥は重ねて¥¥とする
     //VideoCapture cap("videos/sample.mp4"); //Macの場合
 
     //動画の最大フレーム数

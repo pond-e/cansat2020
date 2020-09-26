@@ -222,6 +222,11 @@ int main(void) {
 		double s5 = LastcenterX[2]*LastcenterY[1];
 		double s6 = LastcenterX[0]*LastcenterY[2];
 		D = fabs((s1+s2+s3-s4-s5-s6)/2);
+		//線描画
+		line(Dst, cv::Point(LastcenterX[0], LastcenterY[0]), cv::Point(LastcenterX[1], LastcenterY[1]), cv::Scalar(255,0,0), 10, 8); //(100,300)と(400,300)を結ぶ太さ10の青色直線
+		line(Dst, cv::Point(LastcenterX[1], LastcenterY[1]), cv::Point(LastcenterX[2], LastcenterY[2]), cv::Scalar(255,0,0), 10, 8); //(100,300)と(400,300)を結ぶ太さ10の青色直線
+   		line(Dst, cv::Point(LastcenterX[2], LastcenterY[2]), cv::Point(LastcenterX[0], LastcenterY[0]), cv::Scalar(255,0,0), 10, 8); //(100,300)と(400,300)を結ぶ太さ10の青色直線
+		cv::imwrite("Dst3.png",Dst);
 
 		fstream fs;
 
@@ -260,6 +265,14 @@ int main(void) {
                 double m4 = LastcenterX[3]*(LastcenterY[2]-LastcenterY[0]);
              
                 E = fabs((m1+m2+m3+m4)/2);
+		
+		//線描画
+                line(Dst, cv::Point(LastcenterX[0], LastcenterY[0]), cv::Point(LastcenterX[1], LastcenterY[1]), cv::Scalar(255,0,0), 10, 8); //(100,300)と(400,300)を結ぶ太さ10の青色直線
+                line(Dst, cv::Point(LastcenterX[1], LastcenterY[1]), cv::Point(LastcenterX[2], LastcenterY[2]), cv::Scalar(255,0,0), 10, 8); //(100,300)と(400,300)を結ぶ太さ10の青色直線
+                line(Dst, cv::Point(LastcenterX[2], LastcenterY[2]), cv::Point(LastcenterX[3], LastcenterY[3]), cv::Scalar(255,0,0), 10, 8); //(100,300)と(400,300)を結ぶ太さ10の青色直線
+		line(Dst, cv::Point(LastcenterX[3], LastcenterY[3]), cv::Point(LastcenterX[0], LastcenterY[0]), cv::Scalar(255,0,0), 10, 8); //(100,300)と(400,300)を結ぶ太さ10の青色直線
+                cv::imwrite("Dst4.png",Dst);
+
 
                 fstream fs;
 

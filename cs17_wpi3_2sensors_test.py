@@ -586,10 +586,12 @@ def calibGyro(_count=1000):
     print("Gyro calibration complete")
     return offsetGyroX, offsetGyroY, offsetGyroZ
 ###############ローバーの設定###################
-houkou_rad = 0.52
-max     = -100
-counter = 0
+houkou_rad  = 0.52
+max         = -100
+counter     = 0
 count_limit = 0
+h_first     = -1
+counter_h   = 0
 GPIO.setmode(GPIO.BCM)
 #GPIO4を出力端子設定
 GPIO.setup(4, GPIO.OUT)
@@ -608,6 +610,7 @@ flag_r = False
 flag_p = False
 gosa_l = 0.5184
 gosa_s = 0.4489
+
 ###################ローバ制御#########################
 def para():
     dc3=0.035
@@ -681,10 +684,12 @@ if __name__ == '__main__':
             gyr = getGyro()  # ジャイロ値の取得
             mag = getMag()  # 磁気値の取得
             h = (((1013.25 / press) ** (1 / 5.257) - 1) * (temp + 273.15)) / 0.0065
+            if h_first == -1:
+                h_first = h
 
             if(h > max):
                 max = h
-                '''
+
 ############GPSデータの取得#############
             gps_data = ser.readline()
             if not gps_data:
@@ -746,15 +751,17 @@ if __name__ == '__main__':
                     f.write(time_and_number + ',' + alt_lat_long + '\n')
                     print(time_and_number + ',' + alt_lat_long)
 #######################################
-'''
+
             time1 = time.time()
             time_d = time1 - time0
             print("time_d = %8.8f\n"%time_d)
             # パラシュートを落とすための条件とローバーを動かす時の条件
             if ((max-h) > 30):
                 if (flag_r == False):
-                    if ((acc[1]*acc[1]+acc[2]*acc[2]) > gosa_s and (acc[1]*acc[1]+acc[2]*acc[2]) < gosa_l):
-                        flag_r = True
+                    if (h > h_first-2 and h < h_first+2):
+                        counter_h += 1
+                        if counter_h == 5:
+                            flag_r = True
 #########################################
             time0 = time1
 #########################################

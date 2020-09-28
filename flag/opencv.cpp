@@ -1,12 +1,13 @@
-#include<iostream>
-#include<vector>
-#include<random>
-#include<string>
-#include<stdlib.h>
-#include<fstream>
-#include<cmath>
-#include<opencv2/opencv.hpp>
-#include<opencv2/imgproc/types_c.h>
+#include <iostream>
+#include <vector>
+#include <random>
+#include <string>
+#include <stdlib.h>
+#include <fstream>
+#include <iomanip>
+#include <cmath>
+#include <opencv2/opencv.hpp>
+#include <opencv2/imgproc/types_c.h>
 using namespace std;
 
 int main(void) {
@@ -18,10 +19,12 @@ int main(void) {
 	int f=255;
 
 	cv::Mat img;
+	cv::Mat img2;
 	cv::Mat test;
 
 	//filename入力
-	img = cv::imread("1.png");
+	img = cv::imread("a.png");
+	img2 = cv::imread("a.png");
 	if (img.empty()) {
 		// 画像の中身が空なら終了する
 		cout << "not available" <<endl;
@@ -91,7 +94,7 @@ int main(void) {
 		cv::cvtColor(img, gray, cv::COLOR_BGR2HSV);
 		cv::inRange(gray, cv::Scalar(a, b, c), cv::Scalar(d, e, f), frame);
 		cv::erode(frame, frame, cv::Mat(), cv::Point(-1, -1), 3);
-		cv::dilate(frame, frame, cv::Mat(), cv::Point(-1, -1), 5); 	
+		cv::dilate(frame, frame, cv::Mat(), cv::Point(-1, -1), 4); 	
 		cv::imshow("default",img);
 		cv::imshow("frame",frame);
 
@@ -106,7 +109,7 @@ int main(void) {
 	cv::cvtColor(img, test, cv::COLOR_BGR2HSV);
 	cv::inRange(test, cv::Scalar(a, b, c), cv::Scalar(d, e, f), test);
 	cv::erode(test, test, cv::Mat(), cv::Point(-1, -1), 3);
-	cv::dilate(test, test, cv::Mat(), cv::Point(-1, -1), 5);
+	cv::dilate(test, test, cv::Mat(), cv::Point(-1, -1), 4);
 
 
 	//輪郭抽出+最大面積抽出
@@ -135,13 +138,13 @@ int main(void) {
    */
 	// 最大面積を持つ輪郭の最小外接円を取得
 	cv::minEnclosingCircle(contours.at(max_area_contour), center, radius);
-	printf("%lf\n",radius);
-
-
+	cout << radius << endl;
 	//半径で縮尺を求める
-	double R = 0.145/radius;
-
-
+	double R = 0.145*0.145 / radius / radius;
+	cout << fixed << setprecision(15) << R << endl;
+	//cout << fixed << setprecision(15) << Rl << endl;
+	
+	
 	//ラべリング
 	cv::Mat LabelImg;
 	cv::Mat stats;
@@ -183,6 +186,8 @@ int main(void) {
 		centerX[i] = static_cast<int>(param[0]);
 		centerY[i] = static_cast<int>(param[1]);
 		cv::circle(Dst, cv::Point(centerX[i], centerY[i]), 3, cv::Scalar(0, 0, 255), -1);
+		cv::circle(img2, cv::Point(centerX[i], centerY[i]), 3, cv::Scalar(0, 0, 255), -1);
+
 	}
 
 
@@ -200,20 +205,25 @@ int main(void) {
 			int height = param[cv::ConnectedComponentsTypes::CC_STAT_HEIGHT];
 			int width = param[cv::ConnectedComponentsTypes::CC_STAT_WIDTH];
 			cv::rectangle(Dst, cv::Rect(x, y, width, height), cv::Scalar(0, 255, 0), 2);
+			cv::rectangle(img2, cv::Rect(x, y, width, height), cv::Scalar(0, 255, 0), 2);	
 			stringstream num;
 			num << q;
-			cv::putText(Dst, num.str(),cv::Point(x+5, y+20), cv::FONT_HERSHEY_COMPLEX,0.7, cv::Scalar(0, 255, 255), 2);	
+			cv::putText(Dst, num.str(),cv::Point(x+15, y+35), cv::FONT_HERSHEY_COMPLEX,0.7, cv::Scalar(0, 255, 255), 2);	
+			cv::putText(img2, num.str(),cv::Point(x+15, y+35), cv::FONT_HERSHEY_COMPLEX,0.7, cv::Scalar(0, 255, 255), 2);
 			LastcenterX[q] = centerX[i];
 			LastcenterY[q] = centerY[i];
 			q = q+1;
 		}
 	}
+	//cv::circle(Dst, center, radius, cv::Scalar(0,200,0), 1, 8);
 
-	cv::imwrite("Dst.png",Dst);//ROIの画像
+
+	//cv::imwrite("Dst.png",Dst);//ROIの画像
 	double D,E;
-	double Are,Are2;
-	if(q=3){
+	double Are=0,Are2=0;
+	if(q==3){
 
+		cout << "三角形として認識" << endl;
 		//面積を求める
 		double s1 = LastcenterX[0]*LastcenterY[1];
 		double s2 = LastcenterX[1]*LastcenterY[2];
@@ -223,10 +233,20 @@ int main(void) {
 		double s6 = LastcenterX[0]*LastcenterY[2];
 		D = fabs((s1+s2+s3-s4-s5-s6)/2);
 		//線描画
-		line(Dst, cv::Point(LastcenterX[0], LastcenterY[0]), cv::Point(LastcenterX[1], LastcenterY[1]), cv::Scalar(255,0,0), 10, 8); //(100,300)と(400,300)を結ぶ太さ10の青色直線
-		line(Dst, cv::Point(LastcenterX[1], LastcenterY[1]), cv::Point(LastcenterX[2], LastcenterY[2]), cv::Scalar(255,0,0), 10, 8); //(100,300)と(400,300)を結ぶ太さ10の青色直線
-   		line(Dst, cv::Point(LastcenterX[2], LastcenterY[2]), cv::Point(LastcenterX[0], LastcenterY[0]), cv::Scalar(255,0,0), 10, 8); //(100,300)と(400,300)を結ぶ太さ10の青色直線
+		line(Dst, cv::Point(LastcenterX[0], LastcenterY[0]), cv::Point(LastcenterX[1], LastcenterY[1]), cv::Scalar(255,0,0), 1, 8); //(100,300)と(400,300)を結ぶ太さ10の青色直線
+		line(Dst, cv::Point(LastcenterX[1], LastcenterY[1]), cv::Point(LastcenterX[2], LastcenterY[2]), cv::Scalar(255,0,0), 1, 8); //(100,300)と(400,300)を結ぶ太さ10の青色直線
+   		line(Dst, cv::Point(LastcenterX[2], LastcenterY[2]), cv::Point(LastcenterX[0], LastcenterY[0]), cv::Scalar(255,0,0), 1, 8); //(100,300)と(400,300)を結ぶ太さ10の青色直線
+ 		line(img2, cv::Point(LastcenterX[0], LastcenterY[0]), cv::Point(LastcenterX[1], LastcenterY[1]), cv::Scalar(255,0,0), 1, 8); //(100,300)と(400,300)を結ぶ太さ10の青色直線
+                line(img2, cv::Point(LastcenterX[1], LastcenterY[1]), cv::Point(LastcenterX[2], LastcenterY[2]), cv::Scalar(255,0,0), 1, 8); //(100,300)と(400,300)を結ぶ太さ10の青色直線
+                line(img2, cv::Point(LastcenterX[2], LastcenterY[2]), cv::Point(LastcenterX[0], LastcenterY[0]), cv::Scalar(255,0,0), 1, 8); //(100,300)と(400,300)を結ぶ太さ10の青色直線
+
 		cv::imwrite("Dst3.png",Dst);
+		cv::imwrite("Ds.png",img2);
+
+		//縮尺をもとに算出      
+                Are = D/R;
+		cout << "are=" <<fixed << setprecision(15) << D << endl;
+            	cout << "最終面積は" << fixed << setprecision(15) << Are << "m^2"<< endl;
 
 		fstream fs;
 
@@ -251,13 +271,9 @@ int main(void) {
         	fs.close();
 
 
-		//縮尺をもとに算出	
-		Are =D*R*R;
-		printf("are=%f\n",D);
-		printf("最終面積は%fm^2\n",Are);
-	}else if(q=4){
+	}else if(q==4){
 
-	
+		cout << "四角形として認識" << endl;	
 		//面積を求める
                 double m1 = LastcenterX[0]*(LastcenterY[3]-LastcenterY[1]);
                 double m2 = LastcenterX[1]*(LastcenterY[0]-LastcenterY[2]);
@@ -267,12 +283,26 @@ int main(void) {
                 E = fabs((m1+m2+m3+m4)/2);
 		
 		//線描画
-                line(Dst, cv::Point(LastcenterX[0], LastcenterY[0]), cv::Point(LastcenterX[1], LastcenterY[1]), cv::Scalar(255,0,0), 10, 8); //(100,300)と(400,300)を結ぶ太さ10の青色直線
-                line(Dst, cv::Point(LastcenterX[1], LastcenterY[1]), cv::Point(LastcenterX[2], LastcenterY[2]), cv::Scalar(255,0,0), 10, 8); //(100,300)と(400,300)を結ぶ太さ10の青色直線
-                line(Dst, cv::Point(LastcenterX[2], LastcenterY[2]), cv::Point(LastcenterX[3], LastcenterY[3]), cv::Scalar(255,0,0), 10, 8); //(100,300)と(400,300)を結ぶ太さ10の青色直線
-		line(Dst, cv::Point(LastcenterX[3], LastcenterY[3]), cv::Point(LastcenterX[0], LastcenterY[0]), cv::Scalar(255,0,0), 10, 8); //(100,300)と(400,300)を結ぶ太さ10の青色直線
-                cv::imwrite("Dst4.png",Dst);
+                line(Dst, cv::Point(LastcenterX[0], LastcenterY[0]), cv::Point(LastcenterX[1], LastcenterY[1]), cv::Scalar(255,0,0), 1, 8); //(100,300)と(400,300)を結ぶ太さ10の青色直線
+                line(Dst, cv::Point(LastcenterX[0], LastcenterY[0]), cv::Point(LastcenterX[2], LastcenterY[2]), cv::Scalar(255,0,0), 1, 8); //(100,300)と(400,300)を結ぶ太さ10の青色直線
+                line(Dst, cv::Point(LastcenterX[1], LastcenterY[1]), cv::Point(LastcenterX[3], LastcenterY[3]), cv::Scalar(255,0,0), 1, 8); //(100,300)と(400,300)を結ぶ太さ10の青色直線
+		line(Dst, cv::Point(LastcenterX[2], LastcenterY[2]), cv::Point(LastcenterX[3], LastcenterY[3]), cv::Scalar(255,0,0), 1, 8); //(100,300)と(400,300)を結ぶ太さ10の青色直線
+                line(img2, cv::Point(LastcenterX[0], LastcenterY[0]), cv::Point(LastcenterX[1], LastcenterY[1]), cv::Scalar(255,0,0), 1, 8); //(100,300)と(400,300)を結ぶ太さ10の青色直線
+                line(img2, cv::Point(LastcenterX[0], LastcenterY[0]), cv::Point(LastcenterX[2], LastcenterY[2]), cv::Scalar(255,0,0), 1, 8); //(100,300)と(400,300)を結ぶ太さ10の青色直線
+                line(img2, cv::Point(LastcenterX[1], LastcenterY[1]), cv::Point(LastcenterX[3], LastcenterY[3]), cv::Scalar(255,0,0), 1, 8); //(100,300)と(400,300)を結ぶ太さ10の青色直線
+                line(img2, cv::Point(LastcenterX[2], LastcenterY[2]), cv::Point(LastcenterX[3], LastcenterY[3]), cv::Scalar(255,0,0), 1, 8); //(100,300)と(400,300)を結ぶ太さ10の青色直線
 
+		cv::imwrite("Dst4.png",Dst);
+		cv::imwrite("Ds.png",img2);
+		  
+		//縮尺をもとに算出      
+                Are2 =E*R;
+		cout << "are=" <<fixed << setprecision(15) << E << endl;
+                cout << "最終面積は" << fixed << setprecision(15) << Are2 << "m^2"<< endl;
+
+                printf("are=%f\n",E);
+                printf("%lf\n",Are2);
+		//printf("最終面積は%dm^2\n",Eare);
 
                 fstream fs;
 
@@ -296,13 +326,6 @@ int main(void) {
                 // 改行。そして書き出す
                 // close() で暗黙的に書き出す (閉じるときにバッファをすべて書き出してくれる)
                 fs.close();
-
-
-                //縮尺をもとに算出      
-                Are =E*R*R;
-                printf("are=%f\n",E);
-                printf("最終面積は%fm^2\n",Are2);
-
 	
 	
 	}else{

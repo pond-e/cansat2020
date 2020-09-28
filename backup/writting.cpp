@@ -37,7 +37,7 @@ int main()
         //取得した画像を連番画像で保存
         std::ostringstream oss;
         oss << std::setfill('0') << std::setw(3) << i;
-        cv::imwrite("movie_img" + oss.str() + ".png", img);
+        cv::imwrite("pic/movie_img" + oss.str() + ".png", img);
 
         // 表示のために30ms待つ
         waitKey(30);

@@ -591,7 +591,7 @@ def calibGyro(_count=1000):
 houkou_rad = 0.52
 max     = -100
 counter = 0
-count_limit = 0
+count_limit = 50
 h_first     = -1
 counter_h   = 0
 min     = 1000
@@ -772,24 +772,18 @@ if __name__ == '__main__':
             print("time_d = %8.8f\n"%time_d)
             # パラシュートを落とすための条件とローバーを動かす時の条件
             if ((max-h) > 30):
-                if (flag_r == False):
-                    if (h > h_first-2 and h < h_first+2):
-                        counter_h += 1
-                        time.sleep(1)
-                        if counter_h == 5:
-                            flag_r = True
-                            cap.release()
-                            out.release()
-                            cv2.destroyAllWindows()
-
+                if flag_r == False:
+                    time.sleep(30)
+                    flag_r = True
+                    cap.release()
+                    out.release()
+                    cv2.destroyAllWindows()
+                    para()
 
 #########################################
             time0 = time1
 #########################################
             if (flag_r == True and counter<count_limit):
-                if (flag_p == False):
-                    para()
-                    flag_p = True
                 north_raspi(mag)
                 counter += 1
 #########################################

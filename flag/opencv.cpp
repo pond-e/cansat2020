@@ -104,7 +104,12 @@ int main(void) {
 	cout << "*---------Main Start---------*" << endl;
 
 
-
+	cv::FileStorage fs("onmi.xml", cv::FileStorage::READ);
+	fs["intrinsic"] >> intrinsic;
+	fs["distortion"] >> distortion;
+	// 歪み補正
+  	cv::undistort(img, img, intrinsic, distortion);
+	
 	cv::Mat box;
 	cv::cvtColor(img, test, cv::COLOR_BGR2HSV);
 	cv::inRange(test, cv::Scalar(a, b, c), cv::Scalar(d, e, f), test);
@@ -205,7 +210,7 @@ int main(void) {
 			int height = param[cv::ConnectedComponentsTypes::CC_STAT_HEIGHT];
 			int width = param[cv::ConnectedComponentsTypes::CC_STAT_WIDTH];
 			cv::rectangle(Dst, cv::Rect(x, y, width, height), cv::Scalar(0, 255, 0), 2);
-			cv::rectangle(img2, cv::Rect(x, y, width, height), cv::Scalar(0, 255, 0), 2);	
+	  		cv::rectangle(img2, cv::Rect(x, y, width, height), cv::Scalar(0, 255, 0), 2);			
 			stringstream num;
 			num << q;
 			cv::putText(Dst, num.str(),cv::Point(x+15, y+35), cv::FONT_HERSHEY_COMPLEX,0.7, cv::Scalar(0, 255, 255), 2);	

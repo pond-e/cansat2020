@@ -611,6 +611,7 @@ p3.start(0.0)
 ###########ローバーのflag設定########
 flag_r = False
 flag_p = False
+flag_t = False
 gosa_l = 0.5184
 gosa_s = 0.4489
 ###################ローバ制御#########################
@@ -771,14 +772,17 @@ if __name__ == '__main__':
             time_d = time1 - time0
             print("time_d = %8.8f\n"%time_d)
             # パラシュートを落とすための条件とローバーを動かす時の条件
+            if max-h > 30 and flag_t == False:
+                time_fst = time.time()
+                flag_t = True
             if ((max-h) > 30):
                 if flag_r == False:
-                    time.sleep(30)
-                    flag_r = True
-                    cap.release()
-                    out.release()
-                    cv2.destroyAllWindows()
-                    para()
+                    if ((time.time() - time_fst)>30):
+                        flag_r = True
+                        cap.release()
+                        out.release()
+                        cv2.destroyAllWindows()
+                        para()
 
 #########################################
             time0 = time1

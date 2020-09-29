@@ -3,20 +3,19 @@
 #include <sstream>
 #include <iomanip>
 #include <opencv2/opencv.hpp>
-//#include <opencv/highgui.h>
 #include <opencv2/imgcodecs.hpp>
 #include <vector>
-#include <opencv2/ccalib/omnidir.hpp>
+
 
 
 using namespace std;
 
-#define IMAGE_NUM  (10)         /* 画像数 */
+#define IMAGE_NUM  (25)         /* 画像数 */
 #define PAT_ROW    (7)          /* パターンの行数 */
 #define PAT_COL    (10)         /* パターンの列数 */
 #define PAT_SIZE   (PAT_ROW*PAT_COL)
 #define ALL_POINTS (IMAGE_NUM*PAT_SIZE)
-#define CHESS_SIZE (23.0)       /* パターン1マスの1辺サイズ[mm] */
+#define CHESS_SIZE (24.0)       /* パターン1マスの1辺サイズ[mm] */
 
 int main(int argc, char *argv[])
 {
@@ -29,11 +28,11 @@ int main(int argc, char *argv[])
 	vector<cv::Point2f> corners;
 	vector<vector<cv::Point2f>> img_points;
 
-	// (1)キャリブレーション画像の読み込み
+	//キャリブレーション画像の読み込み
 	for (i = 0; i < IMAGE_NUM; i++)
 	{
 		ostringstream ostr;
-		ostr << "calib_img\\" << setfill('0') << setw(2) << i << ".png";
+		ostr << "calib\\" << setfill('0') << setw(2) << i << ".png";
 		cv::Mat src = cv::imread(ostr.str());
 		if (src.empty())
 		{
@@ -45,7 +44,7 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	// (2)3次元空間座標の設定
+	//3次元空間座標の設定
 
 	vector<cv::Point3f> object;
 	for (j = 0; j < PAT_ROW; j++)
@@ -66,10 +65,10 @@ int main(int argc, char *argv[])
 		obj_points.push_back(object);
 	}
 
-	// ３次元の点を ALL_POINTS * 3 の行列(32Bit浮動小数点数:１チャンネル)に変換する 
+	//３次元の点を ALL_POINTS * 3 の行列(32Bit浮動小数点数:１チャンネル)に変換する 
 
 
-	// (3)チェスボード（キャリブレーションパターン）のコーナー検出
+	//チェスボード（キャリブレーションパターン）のコーナー検出
 	int found_num = 0;
 	cv::namedWindow("Calibration", cv::WINDOW_AUTOSIZE);
 	for (i = 0; i < IMAGE_NUM; i++)
@@ -85,7 +84,7 @@ int main(int argc, char *argv[])
 			cerr << setfill('0') << setw(2) << i << "... fail" << endl;
 		}
 
-		// (4)コーナー位置をサブピクセル精度に修正，描画
+		//コーナー位置をサブピクセル精度に修正，描画
 		cv::Mat src_gray = cv::Mat(srcImages[i].size(), CV_8UC1);
 		cv::cvtColor(srcImages[i], src_gray, cv::COLOR_BGR2GRAY);
 		cv::find4QuadCornerSubpix(src_gray, corners, cv::Size(3,3));
@@ -103,20 +102,28 @@ int main(int argc, char *argv[])
 		return -1;
 	}
 
-	// (5)内部パラメータ，歪み係数の推定
-	cv::Mat omniK, omniXi, omniD, omniR, omniT, idx;
-	std::string omniFile = "./omnidirectionalCalibrate.xml";
-	cv::TermCriteria critia(cv::TermCriteria::COUNT + cv::TermCriteria::EPS, 200, 0.0001);
-	double omniRMS = cv::omnidir::calibrate(obj_points, img_points, srcImages[0].size(), omniK, omniXi, omniD, omniR, omniT, 0, critia, idx);
-	// (6)XMLファイルへの書き出し
+	//内部パラメータ，歪み係数の推定
+	std::cout << "cv::calibrateCamera" << std::endl;
+	cv::Mat persK, persD, persR, persT;
+	std::string persFile = "camera.xma";
+	double persRMS = cv::calibrateCamera(obj_points, img_points, srcImages[0].size(), persK, persD, persR, persT);
+	cv::FileStorage persxml(persFile, cv::FileStorage::WRITE);
+	cv::write(persxml, "RMS", persRMS);
+	cv::write(persxml, "intrinsic", persK);
+	cv::write(persxml, "distorction", persD);
+	persxml.release();
 
-	cv::FileStorage omnixml(omniFile, cv::FileStorage::WRITE);
-	cv::write(omnixml, "RMS", omniRMS);
-	cv::write(omnixml, "K", omniK);
-	cv::write(omnixml, "Xi", omniXi);
-	cv::write(omnixml, "D", omniD);
-	omnixml.release();
+
+	//Undistort
+	std::cout << "Undistort" << std::endl;
+	cv::Mat distorted = cv::imread("photo.jpg");
+	cv::Mat undistorted;
+    
+	cv::undistort(distorted, undistorted, persK, persD);
+	cout <<persRMS  << endl;
+	cv::imwrite("undistort.jpg", undistorted);
 	
+
 	return 0;
 
 }

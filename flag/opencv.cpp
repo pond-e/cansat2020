@@ -103,15 +103,23 @@ int main(void) {
 	cv::destroyAllWindows();
 	cout << "*---------Main Start---------*" << endl;
 
+	cv::Mat intrinsic;
+	cv::Mat distcoeffs;
 
-	cv::FileStorage fs("onmi.xml", cv::FileStorage::READ);
-	fs["intrinsic"] >> intrinsic;
-	fs["distortion"] >> distortion;
-	// 歪み補正
-  	cv::undistort(img, img, intrinsic, distortion);
+	cv::FileStorage fs("camera.xml", cv::FileStorage::READ);
+	if (!fs.isOpened()){
+        	std::cout << "File can not be opened." << std::endl;
+        	return -1;
+    	}
 	
+	fs["intrinsic"] >> intrinsic;
+	fs["distortion"] >> distcoeffs;
+	fs.release();
+	
+	cv::undistort(img, test, intrinsic, distcoeffs);
+	cv::imwrite("undistort.png", test);
 	cv::Mat box;
-	cv::cvtColor(img, test, cv::COLOR_BGR2HSV);
+	cv::cvtColor(test, test, cv::COLOR_BGR2HSV);
 	cv::inRange(test, cv::Scalar(a, b, c), cv::Scalar(d, e, f), test);
 	cv::erode(test, test, cv::Mat(), cv::Point(-1, -1), 3);
 	cv::dilate(test, test, cv::Mat(), cv::Point(-1, -1), 4);
@@ -145,9 +153,11 @@ int main(void) {
 	cv::minEnclosingCircle(contours.at(max_area_contour), center, radius);
 	cout << radius << endl;
 	//半径で縮尺を求める
-	double R = 0.145*0.145 / radius / radius;
+	double R = 0.145 / radius;
+	double Rl;
+	Rl = R*R;
 	cout << fixed << setprecision(15) << R << endl;
-	//cout << fixed << setprecision(15) << Rl << endl;
+	cout << fixed << setprecision(15) << Rl << endl;
 	
 	
 	//ラべリング
@@ -210,7 +220,7 @@ int main(void) {
 			int height = param[cv::ConnectedComponentsTypes::CC_STAT_HEIGHT];
 			int width = param[cv::ConnectedComponentsTypes::CC_STAT_WIDTH];
 			cv::rectangle(Dst, cv::Rect(x, y, width, height), cv::Scalar(0, 255, 0), 2);
-	  		cv::rectangle(img2, cv::Rect(x, y, width, height), cv::Scalar(0, 255, 0), 2);			
+			cv::rectangle(img2, cv::Rect(x, y, width, height), cv::Scalar(0, 255, 0), 2);	
 			stringstream num;
 			num << q;
 			cv::putText(Dst, num.str(),cv::Point(x+15, y+35), cv::FONT_HERSHEY_COMPLEX,0.7, cv::Scalar(0, 255, 255), 2);	
@@ -225,7 +235,7 @@ int main(void) {
 
 	//cv::imwrite("Dst.png",Dst);//ROIの画像
 	double D,E;
-	double Are=0,Are2=0;
+	double Are,Are2;
 	if(q==3){
 
 		cout << "三角形として認識" << endl;
@@ -249,7 +259,7 @@ int main(void) {
 		cv::imwrite("Ds.png",img2);
 
 		//縮尺をもとに算出      
-                Are = D/R;
+                Are = D*Rl;
 		cout << "are=" <<fixed << setprecision(15) << D << endl;
             	cout << "最終面積は" << fixed << setprecision(15) << Are << "m^2"<< endl;
 
@@ -301,7 +311,7 @@ int main(void) {
 		cv::imwrite("Ds.png",img2);
 		  
 		//縮尺をもとに算出      
-                Are2 =E*R;
+                Are2 =E*Rl;
 		cout << "are=" <<fixed << setprecision(15) << E << endl;
                 cout << "最終面積は" << fixed << setprecision(15) << Are2 << "m^2"<< endl;
 

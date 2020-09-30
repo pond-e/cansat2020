@@ -23,8 +23,8 @@ int main(void) {
 	cv::Mat test;
 
 	//filename入力
-	img = cv::imread("a.png");
-	img2 = cv::imread("a.png");
+	img = cv::imread("b.png");
+	
 	if (img.empty()) {
 		// 画像の中身が空なら終了する
 		cout << "not available" <<endl;
@@ -93,8 +93,8 @@ int main(void) {
 		printf("(%d,%d,%d)\n", d, e, f);
 		cv::cvtColor(img, gray, cv::COLOR_BGR2HSV);
 		cv::inRange(gray, cv::Scalar(a, b, c), cv::Scalar(d, e, f), frame);
-		cv::erode(frame, frame, cv::Mat(), cv::Point(-1, -1), 3);
-		cv::dilate(frame, frame, cv::Mat(), cv::Point(-1, -1), 4); 	
+		cv::erode(frame, frame, cv::Mat(), cv::Point(-1, -1), 2);
+		cv::dilate(frame, frame, cv::Mat(), cv::Point(-1, -1), 2); 	
 		cv::imshow("default",img);
 		cv::imshow("frame",frame);
 
@@ -116,14 +116,17 @@ int main(void) {
 	fs["distortion"] >> distcoeffs;
 	fs.release();
 	
-	cv::undistort(img, test, intrinsic, distcoeffs);
+	cv::undistort(img, test, intrinsic, distcoeffs);	
 	cv::imwrite("undistort.png", test);
-	cv::Mat box;
+	img2 = cv::imread("undistort.png");
 	cv::cvtColor(test, test, cv::COLOR_BGR2HSV);
 	cv::inRange(test, cv::Scalar(a, b, c), cv::Scalar(d, e, f), test);
-	cv::erode(test, test, cv::Mat(), cv::Point(-1, -1), 3);
-	cv::dilate(test, test, cv::Mat(), cv::Point(-1, -1), 4);
+	cv::erode(test, test, cv::Mat(), cv::Point(-1, -1), 1);
+	cv::dilate(test, test, cv::Mat(), cv::Point(-1, -1), 1);
 
+	
+	
+	cv::Mat box;
 
 	//輪郭抽出+最大面積抽出
 	cv::Point2f center;
@@ -188,7 +191,6 @@ int main(void) {
 		}
 	}
 
-
 	//重心計算
 	double sample_area = max_area*0.4;
 	int sample_area2 = sample_area;
@@ -200,9 +202,8 @@ int main(void) {
 		double *param = centroids.ptr<double>(i);
 		centerX[i] = static_cast<int>(param[0]);
 		centerY[i] = static_cast<int>(param[1]);
-		cv::circle(Dst, cv::Point(centerX[i], centerY[i]), 3, cv::Scalar(0, 0, 255), -1);
-		cv::circle(img2, cv::Point(centerX[i], centerY[i]), 3, cv::Scalar(0, 0, 255), -1);
-
+		//cv::circle(Dst, cv::Point(centerX[i], centerY[i]), 3, cv::Scalar(0, 0, 255), -1);
+		//cv::circle(img2, cv::Point(centerX[i], centerY[i]), 3, cv::Scalar(0, 0, 255), -1);
 	}
 
 
@@ -221,6 +222,8 @@ int main(void) {
 			int width = param[cv::ConnectedComponentsTypes::CC_STAT_WIDTH];
 			cv::rectangle(Dst, cv::Rect(x, y, width, height), cv::Scalar(0, 255, 0), 2);
 			cv::rectangle(img2, cv::Rect(x, y, width, height), cv::Scalar(0, 255, 0), 2);	
+			cv::circle(Dst, cv::Point(centerX[i], centerY[i]), 3, cv::Scalar(0, 0, 255), -1);
+                	cv::circle(img2, cv::Point(centerX[i], centerY[i]), 3, cv::Scalar(0, 0, 255), -1);
 			stringstream num;
 			num << q;
 			cv::putText(Dst, num.str(),cv::Point(x+15, y+35), cv::FONT_HERSHEY_COMPLEX,0.7, cv::Scalar(0, 255, 255), 2);	
@@ -231,9 +234,9 @@ int main(void) {
 		}
 	}
 	//cv::circle(Dst, center, radius, cv::Scalar(0,200,0), 1, 8);
-
-
 	//cv::imwrite("Dst.png",Dst);//ROIの画像
+
+
 	double D,E;
 	double Are,Are2;
 	if(q==3){
@@ -314,10 +317,6 @@ int main(void) {
                 Are2 =E*Rl;
 		cout << "are=" <<fixed << setprecision(15) << E << endl;
                 cout << "最終面積は" << fixed << setprecision(15) << Are2 << "m^2"<< endl;
-
-                printf("are=%f\n",E);
-                printf("%lf\n",Are2);
-		//printf("最終面積は%dm^2\n",Eare);
 
                 fstream fs;
 

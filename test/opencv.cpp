@@ -5,8 +5,7 @@
 #include <opencv2/opencv.hpp>
 #include <opencv2/imgcodecs.hpp>
 #include <vector>
-#include <algorithm>
-#include <experimental/filesystem>
+
 using namespace std;
 
 #define IMAGE_NUM  (26)         /* 画像数 */
@@ -19,6 +18,7 @@ using namespace std;
 int main(int argc, char *argv[])
 {
 	int i, j, k;
+	int found_num = 0;
 	int corner_count, found;
 	int p_count[IMAGE_NUM];
 	// cv::Mat src_img[IMAGE_NUM];
@@ -27,7 +27,7 @@ int main(int argc, char *argv[])
 	vector<cv::Point2f> corners;
 	vector<vector<cv::Point2f>> img_points;
 
-	//キャリブレーション画像の読み込み
+	// (1)キャリブレーション画像の読み込み
 	for (i = 0; i < IMAGE_NUM; i++)
 	{
 		ostringstream ostr;
@@ -41,9 +41,30 @@ int main(int argc, char *argv[])
 		{
 			srcImages.push_back(src);
 		}
+		bool found = cv::findChessboardCorners(srcImages[i], pattern_size, corners);
+		if (found)
+		{
+			cout << setfill('0') << setw(2) << i << "... ok" << endl;
+			found_num++;
+		}
+		else
+		{
+			cerr << setfill('0') << setw(2) << i << "... fail" << endl;
+		}
+
+		// (4)コーナー位置をサブピクセル精度に修正，描画
+		cv::Mat src_gray = cv::Mat(srcImages[i].size(), CV_8UC1);
+		cv::cvtColor(srcImages[i], src_gray, cv::COLOR_BGR2GRAY);
+		cv::find4QuadCornerSubpix(src_gray, corners, cv::Size(3,3));
+		cv::drawChessboardCorners(srcImages[i], pattern_size, corners, found);
+		img_points.push_back(corners);
+
+		//cv::imshow("Calibration", srcImages[i]);
+		cv::waitKey(1);
+
 	}
 
-	//3次元空間座標の設定
+	// (2)3次元空間座標の設定
 
 	vector<cv::Point3f> object;
 	for (j = 0; j < PAT_ROW; j++)
@@ -64,36 +85,16 @@ int main(int argc, char *argv[])
 		obj_points.push_back(object);
 	}
 
-	//３次元の点を ALL_POINTS * 3 の行列(32Bit浮動小数点数:１チャンネル)に変換する 
+	// ３次元の点を ALL_POINTS * 3 の行列(32Bit浮動小数点数:１チャンネル)に変換する 
 
 
-	//チェスボード（キャリブレーションパターン）のコーナー検出
-	int found_num = 0;
-	cv::namedWindow("Calibration", cv::WINDOW_AUTOSIZE);
-	for (i = 0; i < IMAGE_NUM; i++)
-	{
-		auto found = cv::findChessboardCorners(srcImages[i], pattern_size, corners);
-		if (found)
-		{
-			cout << setfill('0') << setw(2) << i << "... ok" << endl;
-			found_num++;
-		}
-		else
-		{
-			cerr << setfill('0') << setw(2) << i << "... fail" << endl;
-		}
+	// (3)チェスボード（キャリブレーションパターン）のコーナー検出
 
-		//コーナー位置をサブピクセル精度に修正，描画
-		cv::Mat src_gray = cv::Mat(srcImages[i].size(), CV_8UC1);
-		cv::cvtColor(srcImages[i], src_gray, cv::COLOR_BGR2GRAY);
-		cv::find4QuadCornerSubpix(src_gray, corners, cv::Size(3,3));
-		cv::drawChessboardCorners(srcImages[i], pattern_size, corners, found);
-		img_points.push_back(corners);
+	//cv::namedWindow("Calibration", cv::WINDOW_AUTOSIZE);
 
-		//cv::imshow("Calibration", srcImages[i]);
-		//cv::waitKey(1);
-	}
-	cv::destroyWindow("Calibration");
+
+
+	//cv::destroyWindow("Calibration");
 
 	if (found_num != IMAGE_NUM)
 	{
@@ -101,32 +102,31 @@ int main(int argc, char *argv[])
 		return -1;
 	}
 
-	//内部パラメータ，歪み係数の推定
-	std::cout << "cv::calibrateCamera" << std::endl;
-	cv::Mat persK, persD, persR, persT;
-	std::string persFile = "./camera.xml";
-	double persRMS = cv::calibrateCamera(obj_points, img_points, srcImages[0].size(), persK, persD, persR, persT);
-	cv::FileStorage persxml("persFile", cv::FileStorage::WRITE);
-	cv::write(persxml, "RMS", persRMS);
-	cv::write(persxml, "intrinsic", persK);
-	cv::write(persxml, "distorction", persD);
-	persxml.release();
+	// (5)内部パラメータ，歪み係数の推定
+	cv::Mat cam_mat; // カメラ内部パラメータ行列
+	cv::Mat dist_coefs; // 歪み係数
+	vector<cv::Mat> rvecs, tvecs; // 各ビューの回転ベクトルと並進ベクトル
+	double persxml = cv::calibrateCamera(obj_points, img_points, srcImages[0].size(), cam_mat, dist_coefs, rvecs, tvecs);
 
-
-	/*/Undistort
-	std::cout << "Undistort" << std::endl;
-	cv::Mat distorted = cv::imread("photo.jpg");
-	cv::Mat undistorted;
-    
-	cv::undistort(distorted, undistorted, persK, persD);
-	cout <<persRMS  << endl;
-	cv::imwrite("undistort.jpg", undistorted);
+	// (6)XMLファイルへの書き出し
+	cv::FileStorage fs("camera.xml", cv::FileStorage::WRITE);
+	if(!fs.isOpened())
+	{
+		cerr << "File can not be opened." << endl;
+		return -1;
+	}
+	fs << "RMS" << persxml;	
+	fs << "intrinsic" << cam_mat;
+	fs << "distortion" << dist_coefs;
+	fs.release();
 	
-	for (i = 0; i < IMAGE_NUM; i++) {
-		cv::ReleaseImage (&src_img[i]);
-  	}
-*/	
-
+	//Undistort
+    	std::cout << "Undistort" << std::endl;
+    	cv::Mat distorted = cv::imread("10.png");
+    	cv::Mat undistorted;
+	cv::undistort(distorted, undistorted, cam_mat, dist_coefs);
+    	cv::imwrite("./undistort.jpg", undistorted);
+	
+	
 	return 0;
-
 }

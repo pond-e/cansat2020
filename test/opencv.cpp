@@ -5,12 +5,11 @@
 #include <opencv2/opencv.hpp>
 #include <opencv2/imgcodecs.hpp>
 #include <vector>
-
-
-
+#include <algorithm>
+#include <experimental/filesystem>
 using namespace std;
 
-#define IMAGE_NUM  (25)         /* 画像数 */
+#define IMAGE_NUM  (26)         /* 画像数 */
 #define PAT_ROW    (7)          /* パターンの行数 */
 #define PAT_COL    (10)         /* パターンの列数 */
 #define PAT_SIZE   (PAT_ROW*PAT_COL)
@@ -32,7 +31,7 @@ int main(int argc, char *argv[])
 	for (i = 0; i < IMAGE_NUM; i++)
 	{
 		ostringstream ostr;
-		ostr << "calib\\" << setfill('0') << setw(2) << i << ".png";
+		ostr << setw(2) << i+10 << ".png";
 		cv::Mat src = cv::imread(ostr.str());
 		if (src.empty())
 		{
@@ -91,8 +90,8 @@ int main(int argc, char *argv[])
 		cv::drawChessboardCorners(srcImages[i], pattern_size, corners, found);
 		img_points.push_back(corners);
 
-		cv::imshow("Calibration", srcImages[i]);
-		cv::waitKey(0);
+		//cv::imshow("Calibration", srcImages[i]);
+		//cv::waitKey(1);
 	}
 	cv::destroyWindow("Calibration");
 
@@ -105,16 +104,16 @@ int main(int argc, char *argv[])
 	//内部パラメータ，歪み係数の推定
 	std::cout << "cv::calibrateCamera" << std::endl;
 	cv::Mat persK, persD, persR, persT;
-	std::string persFile = "camera.xma";
+	std::string persFile = "./camera.xml";
 	double persRMS = cv::calibrateCamera(obj_points, img_points, srcImages[0].size(), persK, persD, persR, persT);
-	cv::FileStorage persxml(persFile, cv::FileStorage::WRITE);
+	cv::FileStorage persxml("persFile", cv::FileStorage::WRITE);
 	cv::write(persxml, "RMS", persRMS);
 	cv::write(persxml, "intrinsic", persK);
 	cv::write(persxml, "distorction", persD);
 	persxml.release();
 
 
-	//Undistort
+	/*/Undistort
 	std::cout << "Undistort" << std::endl;
 	cv::Mat distorted = cv::imread("photo.jpg");
 	cv::Mat undistorted;
@@ -123,6 +122,10 @@ int main(int argc, char *argv[])
 	cout <<persRMS  << endl;
 	cv::imwrite("undistort.jpg", undistorted);
 	
+	for (i = 0; i < IMAGE_NUM; i++) {
+		cv::ReleaseImage (&src_img[i]);
+  	}
+*/	
 
 	return 0;
 

@@ -635,6 +635,15 @@ def north_raspi(mag):
             p1.ChangeDutyCycle(dc1)
             time.sleep(0.4)
             p1.ChangeDutyCycle(0.0)
+        else:
+            #そもまま
+            dc1 = 0.035
+            p1.ChangeDutyCycle(dc1)
+            dc2 = 0.115
+            p2.ChangeDutyCycle(dc2)
+            time.sleep(0.4)
+            p1.ChangeDutyCycle(0.0)
+            p2.ChangeDutyCycle(0.0)
     elif(mag[0]<30 and mag[0]>=10):
         if(mag[1]<10 and mag[1]>-10):
             #半時計回り（右）
@@ -642,6 +651,15 @@ def north_raspi(mag):
             p1.ChangeDutyCycle(dc1)
             time.sleep(0.4)
             p1.ChangeDutyCycle(0.0)
+        else:
+            #そもまま
+            dc1 = 0.035
+            p1.ChangeDutyCycle(dc1)
+            dc2 = 0.115
+            p2.ChangeDutyCycle(dc2)
+            time.sleep(0.4)
+            p1.ChangeDutyCycle(0.0)
+            p2.ChangeDutyCycle(0.0)
     else:
         #そもまま
         dc1 = 0.035
@@ -652,6 +670,16 @@ def north_raspi(mag):
         p1.ChangeDutyCycle(0.0)
         p2.ChangeDutyCycle(0.0)
 
+Servo_pin = 33
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(Servo_pin,GPIO.OUT)
+Servo = GPIO.PWM(Servo_pin,50)
+Servo.start(0)
+def servo_angle(angle):
+    duty=2.5+(11.5-3.5)*(angle+90)/180
+    duty=7.5
+    Servo.ChangeDutyCycle(duty)
+    time.sleep(0.3)
 ###############################################
 ####################mpu9250 date get settings end##################
 if __name__ == '__main__':
@@ -659,11 +687,10 @@ if __name__ == '__main__':
     # 0=内蔵カメラ
     cap = cv2.VideoCapture(0)
 
-    fps = int(cap.get(cv2.CAP_PROP_FPS))
-    w = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
-    h = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+    fps = 30
+    size = (640,480)
     fourcc = cv2.VideoWriter_fourcc(*'XVID')
-    out = cv2.VideoWriter('output.avi', fourcc, fps, (w, h))
+    out = cv2.VideoWriter('output.avi', fourcc, fps, size)
 
 
     # bus     = smbus.SMBus(1)
@@ -790,6 +817,8 @@ if __name__ == '__main__':
             if (flag_r == True and counter<count_limit):
                 north_raspi(mag)
                 counter += 1
+            else:
+                servo_angle(0)
 #########################################
             # ファイルへ書出し
             value = "%s,%6.2f,%6.2f,%7.2f,%6.3f,%6.3f,%6.3f,%6.3f,%6.3f,%6.3f,%6.3f,%6.3f,%6.3f,%4.4f" % (

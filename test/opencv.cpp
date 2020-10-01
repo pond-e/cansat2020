@@ -59,7 +59,7 @@ int main(int argc, char *argv[])
 		cv::drawChessboardCorners(srcImages[i], pattern_size, corners, found);
 		img_points.push_back(corners);
 
-		//cv::imshow("Calibration", srcImages[i]);
+		cv::imshow("Calibration", srcImages[i]);
 		cv::waitKey(1);
 
 	}
@@ -90,11 +90,11 @@ int main(int argc, char *argv[])
 
 	// (3)チェスボード（キャリブレーションパターン）のコーナー検出
 
-	//cv::namedWindow("Calibration", cv::WINDOW_AUTOSIZE);
+	cv::namedWindow("Calibration", cv::WINDOW_AUTOSIZE);
 
 
 
-	//cv::destroyWindow("Calibration");
+	cv::destroyWindow("Calibration");
 
 	if (found_num != IMAGE_NUM)
 	{

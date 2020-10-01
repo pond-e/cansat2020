@@ -643,7 +643,7 @@ def north_raspi(mag):
             time.sleep(0.4)
             p1.ChangeDutyCycle(0.0)
     else:
-        #そもまま
+        #そのまま
         dc1 = 0.035
         p1.ChangeDutyCycle(dc1)
         dc2 = 0.115

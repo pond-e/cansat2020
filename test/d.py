@@ -7,11 +7,11 @@ import numpy as np
 # 0=内蔵カメラ
 cap = cv2.VideoCapture(0)
  
-#fps = int(cap.get(cv2.CAP_PROP_FPS))
-#w = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
-#h = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+fps = 30 
+w = 480
+h = 480
 fourcc = cv2.VideoWriter_fourcc(*'XVID')
-out = cv2.VideoWriter('output.avi', fourcc, 30, (1920, 1080))
+out = cv2.VideoWriter('output.avi', fourcc, fps, (w, h))
 time0 = time.time()   
 
 while True:

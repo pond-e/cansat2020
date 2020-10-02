@@ -688,9 +688,10 @@ if __name__ == '__main__':
     cap = cv2.VideoCapture(0)
 
     fps = 30
-    size = (640,480)
+    w = int(cap.get(cv2.CAP_PROP_FPS))
+    h = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
     fourcc = cv2.VideoWriter_fourcc(*'XVID')
-    out = cv2.VideoWriter('output.avi', fourcc, fps, size)
+    out = cv2.VideoWriter('output.avi', fourcc, fps, (w, h))
 
 
     # bus     = smbus.SMBus(1)

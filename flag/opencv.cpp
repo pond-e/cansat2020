@@ -23,7 +23,7 @@ int main(void) {
 	cv::Mat test;
 
 	//filename入力
-	img = cv::imread("a.png");
+	img = cv::imread("b.png");
 	
 	if (img.empty()) {
 		// 画像の中身が空なら終了する

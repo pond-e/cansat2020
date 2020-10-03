@@ -8,7 +8,7 @@
 
 using namespace std;
 
-#define IMAGE_NUM  (26)         /* 画像数 */
+#define IMAGE_NUM  (22)         /* 画像数 */
 #define PAT_ROW    (7)          /* パターンの行数 */
 #define PAT_COL    (10)         /* パターンの列数 */
 #define PAT_SIZE   (PAT_ROW*PAT_COL)

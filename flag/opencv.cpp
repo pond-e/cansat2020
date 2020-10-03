@@ -44,7 +44,8 @@ int main(void) {
 			case 113://Q
 				a = a + 5;
 				break;
-			case 97://A
+			case 97://A(255,255,255)
+
 				a = a - 3;
 				break;
 			case 119://W
@@ -106,7 +107,7 @@ int main(void) {
 	cv::Mat intrinsic;
 	cv::Mat distcoeffs;
 
-	cv::FileStorage fs("camera.xml", cv::FileStorage::READ);
+	cv::FileStorage fs("camera2.xml", cv::FileStorage::READ);
 	if (!fs.isOpened()){
         	std::cout << "File can not be opened." << std::endl;
         	return -1;
@@ -121,8 +122,8 @@ int main(void) {
 	img2 = cv::imread("undistort.png");
 	cv::cvtColor(test, test, cv::COLOR_BGR2HSV);
 	cv::inRange(test, cv::Scalar(a, b, c), cv::Scalar(d, e, f), test);
-	cv::erode(test, test, cv::Mat(), cv::Point(-1, -1), 1);
-	cv::dilate(test, test, cv::Mat(), cv::Point(-1, -1), 1);
+	cv::erode(test, test, cv::Mat(), cv::Point(-1, -1), 2);
+	cv::dilate(test, test, cv::Mat(), cv::Point(-1, -1), 2);
 
 	
 	
@@ -156,7 +157,7 @@ int main(void) {
 	cv::minEnclosingCircle(contours.at(max_area_contour), center, radius);
 	cout << radius << endl;
 	//半径で縮尺を求める
-	double R = 0.145 / radius;
+	double R = 0.257 / radius;
 	double Rl;
 	Rl = R*R;
 	cout << fixed << setprecision(15) << R << endl;
@@ -314,7 +315,7 @@ int main(void) {
 		cv::imwrite("Ds.png",img2);
 		  
 		//縮尺をもとに算出      
-                Are2 =E*Rl;
+                Are2 = E*Rl;
 		cout << "are=" <<fixed << setprecision(15) << E << endl;
                 cout << "最終面積は" << fixed << setprecision(15) << Are2 << "m^2"<< endl;
 
@@ -332,7 +333,7 @@ int main(void) {
 		fs << "4" << "," << LastcenterX[3] <<", " << LastcenterY[3] << endl;
 
                 fs << "縮尺[実寸/画像内]" << endl;
-                fs << E << endl;
+                fs << R << endl;
 
                 fs << "面積[m^2]" << endl;
                 fs <<  Are2 << endl;
@@ -345,6 +346,7 @@ int main(void) {
 	}else{
 
 		cout <<"too more lab!!"<< endl;
+		cv::imwrite("fail.png",Dst);
 	}		
 
 

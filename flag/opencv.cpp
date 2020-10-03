@@ -23,7 +23,7 @@ int main(void) {
 	cv::Mat test;
 
 	//filename入力
-	img = cv::imread("b.png");
+	img = cv::imread("a.png");
 	
 	if (img.empty()) {
 		// 画像の中身が空なら終了する
@@ -260,7 +260,7 @@ int main(void) {
                 line(img2, cv::Point(LastcenterX[2], LastcenterY[2]), cv::Point(LastcenterX[0], LastcenterY[0]), cv::Scalar(255,0,0), 1, 8); //(100,300)と(400,300)を結ぶ太さ10の青色直線
 
 		cv::imwrite("Dst3.png",Dst);
-		cv::imwrite("Ds.png",img2);
+		cv::imwrite("Ds3.png",img2);
 
 		//縮尺をもとに算出      
                 Are = D*Rl;
@@ -312,7 +312,7 @@ int main(void) {
                 line(img2, cv::Point(LastcenterX[2], LastcenterY[2]), cv::Point(LastcenterX[3], LastcenterY[3]), cv::Scalar(255,0,0), 1, 8); //(100,300)と(400,300)を結ぶ太さ10の青色直線
 
 		cv::imwrite("Dst4.png",Dst);
-		cv::imwrite("Ds.png",img2);
+		cv::imwrite("Ds4.png",img2);
 		  
 		//縮尺をもとに算出      
                 Are2 = E*Rl;

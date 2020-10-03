@@ -597,10 +597,13 @@ counter_h   = 0
 min     = 1000
 GPIO.setmode(GPIO.BCM)
 #GPIO4を出力端子設定
+'''
 GPIO.setup(4, GPIO.OUT)
 GPIO.setup(5, GPIO.OUT)
 GPIO.setup(6, GPIO.OUT)
+'''
 #GPIO4をPWM設定、周波数は50Hz
+'''
 p1 = GPIO.PWM(4,50)
 p2 = GPIO.PWM(5,50)
 p3 = GPIO.PWM(6,50)
@@ -608,12 +611,14 @@ p3 = GPIO.PWM(6,50)
 p1.start(0.0)
 p2.start(0.0)
 p3.start(0.0)
+'''
 ###########ローバーのflag設定########
 flag_r = False
 flag_p = False
 flag_t = False
 gosa_l = 0.5184
 gosa_s = 0.4489
+'''
 ###################ローバ制御#########################
 def para():
     dc3=0.035
@@ -671,15 +676,19 @@ def north_raspi(mag):
         p2.ChangeDutyCycle(0.0)
 
 Servo_pin = 33
-GPIO.setmode(GPIO.BCM)
-GPIO.setup(Servo_pin,GPIO.OUT)
-Servo = GPIO.PWM(Servo_pin,50)
+'''
+'''
+GPIO.setup(Servo_pin, GPIO.OUT)
+'''
+'''
+Servo = GPIO.PWM(Servo_pin, 50)
 Servo.start(0)
 def servo_angle(angle):
     duty=2.5+(11.5-3.5)*(angle+90)/180
     duty=7.5
     Servo.ChangeDutyCycle(duty)
     time.sleep(0.3)
+'''
 ###############################################
 ####################mpu9250 date get settings end##################
 if __name__ == '__main__':
@@ -688,10 +697,10 @@ if __name__ == '__main__':
     cap = cv2.VideoCapture(0)
 
     fps = 30
-    w = int(cap.get(cv2.CAP_PROP_FPS))
-    h = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
-    fourcc = cv2.VideoWriter_fourcc(*'XVID')
-    out = cv2.VideoWriter('output.avi', fourcc, fps, (w, h))
+    w = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+    h = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+    fourcc = cv2.VideoWriter_fourcc('m', 'p', '4', 'v')
+    video = cv2.VideoWriter('output.mp4', fourcc, fps, (w, h))
 
 
     # bus     = smbus.SMBus(1)
@@ -716,9 +725,8 @@ if __name__ == '__main__':
     f_cs17_wpi3_2sensors.write(value + "\n")  # header行をファイル出力
     while True:  # データ取得時間制限あり
         try:
-            frame = cap.read()
-            out.write(frame)
-
+            ret, frame = cap.read()                             # フレームを取得
+            video.write(frame)
             # for _i in range(TIMES):		#データ取得時間制限なし
             date = datetime.datetime.now()  # now()メソッドで現在日付・時刻のdatetime型データの変数を取得 世界時：UTCnow
             now = time.time()  # 現在時刻の取得
@@ -733,7 +741,7 @@ if __name__ == '__main__':
                 min = h_first
             if(h > max):
                 max = h
-
+            '''
 ############GPSデータの取得#############
             gps_data = ser.readline()
             if not gps_data:
@@ -764,11 +772,11 @@ if __name__ == '__main__':
                 with open('datagsv.csv', 'a') as f:
                     gpgsv = gps_data.split(',')
                     if gpgsv[2] == '1':
-                    num_sat = gpgsv[3]
+                        num_sat = gpgsv[3]
                     f.write(gpgsv[1] + gpgsv[3] + '\n')
                     #それぞれの衛星の番号、仰角、方位角を追加する
                     if len(gpgsv) == 4:
-                        num_sat = '0'
+                        num_sat='0'
                     elif len(gpgsv) == 20:
                         gsv4 = gpgsv[16] + gpgsv[17] + gpgsv[18]    #４つ目の衛星
                         f.write(gsv4 + '\n')
@@ -791,10 +799,11 @@ if __name__ == '__main__':
                 time_and_number = "%s,%s" % (yyyymmddhhmmssff, num_sat)
                 # ファイル名を書き換える
                 # GGAのデータを標準出力、加えてcsvファイルに出力
-                with opwn(new_name, 'a') as f:https://qiita.com/linyixian/items/02b21609067f694b4a73
+                with opwn(new_name, 'a') as f:
                     f.write(time_and_number + ',' + alt_lat_long + '\n')
                     print(time_and_number + ',' + alt_lat_long)
 #######################################
+            '''
 
             time1 = time.time()
             time_d = time1 - time0
@@ -819,7 +828,9 @@ if __name__ == '__main__':
                 north_raspi(mag)
                 counter += 1
             else:
+                '''
                 servo_angle(0)
+                '''
 #########################################
             # ファイルへ書出し
             value = "%s,%6.2f,%6.2f,%7.2f,%6.3f,%6.3f,%6.3f,%6.3f,%6.3f,%6.3f,%6.3f,%6.3f,%6.3f,%4.4f" % (
@@ -827,7 +838,6 @@ if __name__ == '__main__':
             ,h)  # 時間、xyz軸回りの加速度, 0地点からの距離
             f_cs17_wpi3_2sensors.write(value + "\n")  # ファイルを出力
             print(value)  # 標準出力
-
             # 指定秒数の一時停止
             sleepTime = SAMPLING_TIME - (time.time() - now)
             if sleepTime < 0.0:
